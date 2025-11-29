@@ -16,41 +16,36 @@ jobs:
       RAILWAY_SERVICE_ID: c3dabf71-757f-4090-9b05-a1ef18f477a6
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout code
+      uses: actions/checkout@v3
 
-    - name: Create .env file to upload
+    - name: Set Railway Variables using API
       run: |
-        echo CONNECTION_STRING="${{ secrets.CONNECTION_STRING }}" >> vars.env
-        echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> vars.env
-        echo MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" >> vars.env
-        echo PAYPAL_CLIENT_ID="${{ secrets.PAYPAL_CLIENT_ID }}" >> vars.env
-        echo PAYPAL_CLIENT_SECRET="${{ secrets.PAYPAL_CLIENT_SECRET }}" >> vars.env
-        echo PAYOS_CLIENT_ID="${{ secrets.PAYOS_CLIENT_ID }}" >> vars.env
-        echo PAYOS_API_KEY="${{ secrets.PAYOS_API_KEY }}" >> vars.env
-        echo PAYOS_CHECKSUM="${{ secrets.PAYOS_CHECKSUM }}" >> vars.env
-        echo FIREBASE_CONFIG_BASE64="${{ secrets.FIREBASE_CONFIG_BASE64 }}" >> vars.env
+        declare -A vars=(
+          ["CONNECTION_STRING"]="${{ secrets.CONNECTION_STRING }}"
+          ["SECRET_KEY"]="${{ secrets.SECRET_KEY }}"
+          ["MAIL_PASSWORD"]="${{ secrets.MAIL_PASSWORD }}"
+          ["PAYPAL_CLIENT_ID"]="${{ secrets.PAYPAL_CLIENT_ID }}"
+          ["PAYPAL_CLIENT_SECRET"]="${{ secrets.PAYPAL_CLIENT_SECRET }}"
+          ["PAYOS_CLIENT_ID"]="${{ secrets.PAYOS_CLIENT_ID }}"
+          ["PAYOS_API_KEY"]="${{ secrets.PAYOS_API_KEY }}"
+          ["PAYOS_CHECKSUM"]="${{ secrets.PAYOS_CHECKSUM }}"
+          ["FIREBASE_CONFIG_BASE64"]="${{ secrets.FIREBASE_CONFIG_BASE64 }}"
+        )
 
-    - name: Upload env file to Railway Environment
-      run: |
-        curl -X POST https://backboard.railway.app/graphql \
-        -H "Authorization: Bearer $RAILWAY_TOKEN" \
-        -F "variables=@vars.env" \
-        -F "query=
-          mutation UploadVariables(\$projectId: String!, \$environmentId: String!) {
-            variablesUpload(
-              input: {
-                projectId: \$projectId,
-                environmentId: \$environmentId
-              }
-            )
-          }" \
-        -F "operationName=UploadVariables" \
-        -F "map={\"variables\":\"variables\"}" \
-        -F "projects={\"projectId\": \"$RAILWAY_PROJECT_ID\", \"environmentId\": \"$RAILWAY_ENV_ID\"}"
+        for key in "${!vars[@]}"; do
+          value="${vars[$key]}"
+          echo "Setting $key ..."
+
+          curl -s -X POST https://backboard.railway.app/graphql \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"mutation { variableUpsert(input: { projectId: \\\"$RAILWAY_PROJECT_ID\\\", environmentId: \\\"$RAILWAY_ENV_ID\\\", name: \\\"$key\\\", value: \\\"$value\\\" }) }\"}"
+        done
 
     - name: Trigger Deploy
       run: |
-        curl -X POST https://backboard.railway.app/graphql \
-        -H "Authorization: Bearer $RAILWAY_TOKEN" \
-        -H "Content-Type: application/json" \
-        -d "{\"query\": \"mutation { deployService(input: { serviceId: \\\"$RAILWAY_SERVICE_ID\\\" }) }\"}"
+        curl -s -X POST https://backboard.railway.app/graphql \
+          -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d "{\"query\":\"mutation { deployService(input: { serviceId: \\\"$RAILWAY_SERVICE_ID\\\" }) }\"}"
