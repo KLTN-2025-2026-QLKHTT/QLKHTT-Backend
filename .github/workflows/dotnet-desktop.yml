@@ -11,6 +11,7 @@ jobs:
 
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_ENV: production
 
     steps:
     - name: Checkout repo
@@ -21,15 +22,15 @@ jobs:
 
     - name: Set Railway Environment Variables
       run: |
-        railway env set CONNECTION_STRING="${{ secrets.CONNECTION_STRING }}"
-        railway env set SECRET_KEY="${{ secrets.SECRET_KEY }}"
-        railway env set MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
-        railway env set PAYPAL_CLIENT_ID="${{ secrets.PAYPAL_CLIENT_ID }}"
-        railway env set PAYPAL_CLIENT_SECRET="${{ secrets.PAYPAL_CLIENT_SECRET }}"
-        railway env set PAYOS_CLIENT_ID="${{ secrets.PAYOS_CLIENT_ID }}"
-        railway env set PAYOS_API_KEY="${{ secrets.PAYOS_API_KEY }}"
-        railway env set PAYOS_CHECKSUM="${{ secrets.PAYOS_CHECKSUM }}"
-        railway env set FIREBASE_CONFIG_BASE64="${{ secrets.FIREBASE_CONFIG_BASE64 }}"
+        railway environment $RAILWAY_ENV variables set CONNECTION_STRING "${{ secrets.CONNECTION_STRING }}"
+        railway environment $RAILWAY_ENV variables set SECRET_KEY "${{ secrets.SECRET_KEY }}"
+        railway environment $RAILWAY_ENV variables set MAIL_PASSWORD "${{ secrets.MAIL_PASSWORD }}"
+        railway environment $RAILWAY_ENV variables set PAYPAL_CLIENT_ID "${{ secrets.PAYPAL_CLIENT_ID }}"
+        railway environment $RAILWAY_ENV variables set PAYPAL_CLIENT_SECRET "${{ secrets.PAYPAL_CLIENT_SECRET }}"
+        railway environment $RAILWAY_ENV variables set PAYOS_CLIENT_ID "${{ secrets.PAYOS_CLIENT_ID }}"
+        railway environment $RAILWAY_ENV variables set PAYOS_API_KEY "${{ secrets.PAYOS_API_KEY }}"
+        railway environment $RAILWAY_ENV variables set PAYOS_CHECKSUM "${{ secrets.PAYOS_CHECKSUM }}"
+        railway environment $RAILWAY_ENV variables set FIREBASE_CONFIG_BASE64 "${{ secrets.FIREBASE_CONFIG_BASE64 }}"
 
     - name: Deploy to Railway
       run: railway up --ci
