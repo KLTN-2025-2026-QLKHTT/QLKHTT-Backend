@@ -1,0 +1,131 @@
+﻿## ============================================================
+## 🧱 VISUAL STUDIO / .NET BACKEND IGNORE
+## 
+## ============================================================
+
+# dotenv files
+.env
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# User-specific files (MonoDevelop/Xamarin Studio)
+*.userprefs
+
+# Mono auto generated files
+mono_crash.*
+
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+.vs/
+Generated\ Files/
+[Tt]est[Rr]esult*/
+[Bb]uild[Ll]og.*
+*.VisualState.xml
+TestResult.xml
+nunit-*.xml
+BenchmarkDotNet.Artifacts/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+.tye/
+ScaffoldingReadMe.txt
+StyleCopReport.xml
+
+
+## ============================================================
+## ⚛️ FRONTEND (React + TypeScript) IGNORE
+## ============================================================
+
+# dependencies
+node_modules/
+.pnp/
+.pnp.js
+
+# testing
+coverage/
+coverage-*
+
+# production build
+build/
+dist/
+
+# misc
+.DS_Store
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.tsbuildinfo
+
+# environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# editor folders
+.vscode/
+.idea/
+*.code-workspace
+
+# system files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# firebase / secrets / credentials
+*.secret.*
+*firebase-adminsdk*.json
+*service-account*.json
+*.credentials.json
+
+# compiled artifacts (if using Vite)
+*.vite
+.vite/
+.vite-cache/
+
+# next.js / other frameworks
+.next/
+out/
+
+# temporary folders
+temp/
+tmp/
+
+# backups
+*.bak
+*.backup
+
+# Mac / Windows trash
+$RECYCLE.BIN/
+.Trashes
+
+## ============================================================
+## ✅ END OF FILE
+## ============================================================
