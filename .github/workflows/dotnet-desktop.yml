@@ -19,17 +19,17 @@ jobs:
     - name: Install Railway CLI
       run: npm i -g @railway/cli
 
-    - name: Set Railway Variables
+    - name: Set Railway Environment Variables
       run: |
-        railway variables set CONNECTION_STRING="${{ secrets.CONNECTION_STRING }}"
-        railway variables set SECRET_KEY="${{ secrets.SECRET_KEY }}"
-        railway variables set MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
-        railway variables set PAYPAL_CLIENT_ID="${{ secrets.PAYPAL_CLIENT_ID }}"
-        railway variables set PAYPAL_CLIENT_SECRET="${{ secrets.PAYPAL_CLIENT_SECRET }}"
-        railway variables set PAYOS_CLIENT_ID="${{ secrets.PAYOS_CLIENT_ID }}"
-        railway variables set PAYOS_API_KEY="${{ secrets.PAYOS_API_KEY }}"
-        railway variables set PAYOS_CHECKSUM="${{ secrets.PAYOS_CHECKSUM }}"
-        railway variables set FIREBASE_CONFIG_BASE64="${{ secrets.FIREBASE_CONFIG_BASE64 }}"
+        railway env set CONNECTION_STRING="${{ secrets.CONNECTION_STRING }}"
+        railway env set SECRET_KEY="${{ secrets.SECRET_KEY }}"
+        railway env set MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}"
+        railway env set PAYPAL_CLIENT_ID="${{ secrets.PAYPAL_CLIENT_ID }}"
+        railway env set PAYPAL_CLIENT_SECRET="${{ secrets.PAYPAL_CLIENT_SECRET }}"
+        railway env set PAYOS_CLIENT_ID="${{ secrets.PAYOS_CLIENT_ID }}"
+        railway env set PAYOS_API_KEY="${{ secrets.PAYOS_API_KEY }}"
+        railway env set PAYOS_CHECKSUM="${{ secrets.PAYOS_CHECKSUM }}"
+        railway env set FIREBASE_CONFIG_BASE64="${{ secrets.FIREBASE_CONFIG_BASE64 }}"
 
     - name: Deploy to Railway
       run: railway up --ci
