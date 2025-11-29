@@ -1,4 +1,4 @@
-name: Deploy to Railway (Docker)
+name: Deploy .NET API to Railway
 
 on:
   push:
@@ -11,28 +11,41 @@ jobs:
 
     env:
       RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_PROJECT_ID: 0152fc48-48df-4531-91f3-139d8d74a279
+      RAILWAY_ENV_ID: d7df6b8b-8def-4a3c-a8f2-c02f585d5781
+      RAILWAY_SERVICE_ID: c3dabf71-757f-4090-9b05-a1ef18f477a6
 
     steps:
-    - name: Checkout repo
+    - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Create .env file for Railway
+    - name: Set Railway Variables using API
       run: |
-        echo CONNECTION_STRING="${{ secrets.CONNECTION_STRING }}" >> .env
-        echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
-        echo MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" >> .env
-        echo PAYPAL_CLIENT_ID="${{ secrets.PAYPAL_CLIENT_ID }}" >> .env
-        echo PAYPAL_CLIENT_SECRET="${{ secrets.PAYPAL_CLIENT_SECRET }}" >> .env
-        echo PAYOS_CLIENT_ID="${{ secrets.PAYOS_CLIENT_ID }}" >> .env
-        echo PAYOS_API_KEY="${{ secrets.PAYOS_API_KEY }}" >> .env
-        echo PAYOS_CHECKSUM="${{ secrets.PAYOS_CHECKSUM }}" >> .env
-        echo FIREBASE_CONFIG_BASE64="${{ secrets.FIREBASE_CONFIG_BASE64 }}" >> .env
+        declare -A vars=(
+          ["CONNECTION_STRING"]="${{ secrets.CONNECTION_STRING }}"
+          ["SECRET_KEY"]="${{ secrets.SECRET_KEY }}"
+          ["MAIL_PASSWORD"]="${{ secrets.MAIL_PASSWORD }}"
+          ["PAYPAL_CLIENT_ID"]="${{ secrets.PAYPAL_CLIENT_ID }}"
+          ["PAYPAL_CLIENT_SECRET"]="${{ secrets.PAYPAL_CLIENT_SECRET }}"
+          ["PAYOS_CLIENT_ID"]="${{ secrets.PAYOS_CLIENT_ID }}"
+          ["PAYOS_API_KEY"]="${{ secrets.PAYOS_API_KEY }}"
+          ["PAYOS_CHECKSUM"]="${{ secrets.PAYOS_CHECKSUM }}"
+          ["FIREBASE_CONFIG_BASE64"]="${{ secrets.FIREBASE_CONFIG_BASE64 }}"
+        )
 
-    - name: Install Railway CLI
-      run: npm i -g @railway/cli
+        for key in "${!vars[@]}"; do
+          value="${vars[$key]}"
+          echo "Setting $key ..."
 
-    - name: Import env file into Railway
-      run: railway env import .env --replace
+          curl -s -X POST https://backboard.railway.app/graphql \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"mutation { variableUpsert(input: { projectId: \\\"$RAILWAY_PROJECT_ID\\\", environmentId: \\\"$RAILWAY_ENV_ID\\\", name: \\\"$key\\\", value: \\\"$value\\\" }) }\"}"
+        done
 
-    - name: Deploy to Railway
-      run: railway up --ci
+    - name: Trigger Deploy
+      run: |
+        curl -s -X POST https://backboard.railway.app/graphql \
+          -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d "{\"query\":\"mutation { deployService(input: { serviceId: \\\"$RAILWAY_SERVICE_ID\\\" }) }\"}"
