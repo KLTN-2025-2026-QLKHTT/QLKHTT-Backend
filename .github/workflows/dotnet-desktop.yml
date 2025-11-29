@@ -16,20 +16,23 @@ jobs:
     - name: Checkout repo
       uses: actions/checkout@v3
 
+    - name: Create .env file for Railway
+      run: |
+        echo CONNECTION_STRING="${{ secrets.CONNECTION_STRING }}" >> .env
+        echo SECRET_KEY="${{ secrets.SECRET_KEY }}" >> .env
+        echo MAIL_PASSWORD="${{ secrets.MAIL_PASSWORD }}" >> .env
+        echo PAYPAL_CLIENT_ID="${{ secrets.PAYPAL_CLIENT_ID }}" >> .env
+        echo PAYPAL_CLIENT_SECRET="${{ secrets.PAYPAL_CLIENT_SECRET }}" >> .env
+        echo PAYOS_CLIENT_ID="${{ secrets.PAYOS_CLIENT_ID }}" >> .env
+        echo PAYOS_API_KEY="${{ secrets.PAYOS_API_KEY }}" >> .env
+        echo PAYOS_CHECKSUM="${{ secrets.PAYOS_CHECKSUM }}" >> .env
+        echo FIREBASE_CONFIG_BASE64="${{ secrets.FIREBASE_CONFIG_BASE64 }}" >> .env
+
     - name: Install Railway CLI
       run: npm i -g @railway/cli
 
-    - name: Set Railway Environment Variables
-      run: |
-        railway variables CONNECTION_STRING "${{ secrets.CONNECTION_STRING }}"
-        railway variables SECRET_KEY "${{ secrets.SECRET_KEY }}"
-        railway variables MAIL_PASSWORD "${{ secrets.MAIL_PASSWORD }}"
-        railway variables PAYPAL_CLIENT_ID "${{ secrets.PAYPAL_CLIENT_ID }}"
-        railway variables PAYPAL_CLIENT_SECRET "${{ secrets.PAYPAL_CLIENT_SECRET }}"
-        railway variables PAYOS_CLIENT_ID "${{ secrets.PAYOS_CLIENT_ID }}"
-        railway variables PAYOS_API_KEY "${{ secrets.PAYOS_API_KEY }}"
-        railway variables PAYOS_CHECKSUM "${{ secrets.PAYOS_CHECKSUM }}"
-        railway variables FIREBASE_CONFIG_BASE64 "${{ secrets.FIREBASE_CONFIG_BASE64 }}"
+    - name: Import env file into Railway
+      run: railway env import .env --replace
 
     - name: Deploy to Railway
       run: railway up --ci
