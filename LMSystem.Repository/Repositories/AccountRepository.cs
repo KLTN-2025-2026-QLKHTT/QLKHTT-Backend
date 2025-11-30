@@ -337,7 +337,8 @@ namespace LMSystem.Repository.Repositories
                     Email = a.Email,
                     Status = a.Status,
                     ProfileImg = a.ProfileImg,
-                    Role = "Teacher"
+                    Role = "Teacher",
+                    CreatedAt = a.CreatedAt
                 })
                 .ToListAsync();
 
