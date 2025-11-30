@@ -1,0 +1,51 @@
+name: Deploy .NET API to Railway
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    env:
+      RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
+      RAILWAY_PROJECT_ID: 0152fc48-48df-4531-91f3-139d8d74a279
+      RAILWAY_ENV_ID: d7df6b8b-8def-4a3c-a8f2-c02f585d5781
+      RAILWAY_SERVICE_ID: c3dabf71-757f-4090-9b05-a1ef18f477a6
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Set Railway Variables using API
+      run: |
+        declare -A vars=(
+          ["CONNECTION_STRING"]="${{ secrets.CONNECTION_STRING }}"
+          ["SECRET_KEY"]="${{ secrets.SECRET_KEY }}"
+          ["MAIL_PASSWORD"]="${{ secrets.MAIL_PASSWORD }}"
+          ["PAYPAL_CLIENT_ID"]="${{ secrets.PAYPAL_CLIENT_ID }}"
+          ["PAYPAL_CLIENT_SECRET"]="${{ secrets.PAYPAL_CLIENT_SECRET }}"
+          ["PAYOS_CLIENT_ID"]="${{ secrets.PAYOS_CLIENT_ID }}"
+          ["PAYOS_API_KEY"]="${{ secrets.PAYOS_API_KEY }}"
+          ["PAYOS_CHECKSUM"]="${{ secrets.PAYOS_CHECKSUM }}"
+          ["FIREBASE_CONFIG_BASE64"]="${{ secrets.FIREBASE_CONFIG_BASE64 }}"
+        )
+
+        for key in "${!vars[@]}"; do
+          value="${vars[$key]}"
+          echo "Setting $key ..."
+
+          curl -s -X POST https://backboard.railway.app/graphql \
+            -H "Authorization: Bearer $RAILWAY_TOKEN" \
+            -H "Content-Type: application/json" \
+            -d "{\"query\":\"mutation { variableUpsert(input: { projectId: \\\"$RAILWAY_PROJECT_ID\\\", environmentId: \\\"$RAILWAY_ENV_ID\\\", name: \\\"$key\\\", value: \\\"$value\\\" }) }\"}"
+        done
+
+    - name: Trigger Deploy
+      run: |
+        curl -s -X POST https://backboard.railway.app/graphql \
+          -H "Authorization: Bearer $RAILWAY_TOKEN" \
+          -H "Content-Type: application/json" \
+          -d "{\"query\":\"mutation { deployService(input: { serviceId: \\\"$RAILWAY_SERVICE_ID\\\" }) }\"}"
