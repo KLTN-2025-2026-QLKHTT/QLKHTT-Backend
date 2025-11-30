@@ -338,7 +338,13 @@ namespace LMSystem.Repository.Repositories
                     Status = a.Status,
                     ProfileImg = a.ProfileImg,
                     Role = "Teacher",
-                    CreatedAt = a.CreatedAt
+                    CreatedAt = a.CreatedAt.HasValue
+    ? TimeZoneInfo.ConvertTimeFromUtc(
+          a.CreatedAt.Value,
+          TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")
+      ).ToString("dd/MM/yyyy HH:mm")
+    : null
+
                 })
                 .ToListAsync();
 
