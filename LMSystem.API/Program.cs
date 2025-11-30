@@ -99,8 +99,7 @@ builder.Services
 //});
 
 builder.Services.AddDbContext<LMOnlineSystemDbContext>(options =>
-                options.UseNpgsql(Environment.GetEnvironmentVariable("CONNECTION_STRING")));
-
+                options.UseNpgsql(builder.Configuration.GetConnectionString("LMOnlineSystemDB")));
 
 
 
