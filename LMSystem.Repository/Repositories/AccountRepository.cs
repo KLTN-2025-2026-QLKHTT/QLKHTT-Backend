@@ -396,10 +396,10 @@ namespace LMSystem.Repository.Repositories
 
                 // 5) Claims cho JWT
                 var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, model.AccountEmail),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-                };
+        {
+            new Claim(ClaimTypes.Name, model.AccountEmail),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+        };
 
                 foreach (var role in userRole)
                 {
@@ -458,7 +458,6 @@ namespace LMSystem.Repository.Repositories
                 Message = "Email hoặc mật khẩu không chính xác!"
             };
         }
-
 
 
         public async Task<ResponeModel> SignUpAccountAsync(SignUpModel model)
