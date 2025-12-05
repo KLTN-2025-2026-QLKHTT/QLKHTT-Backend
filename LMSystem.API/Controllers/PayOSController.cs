@@ -33,7 +33,7 @@ namespace LMSystem.API.Controllers
             if (order == null) return NotFound("Không tìm thấy đơn hàng");
             long orderCode = long.Parse(DateTimeOffset.Now.ToString("yyMMddHHmmss"));
             string returnUrl = $"https://qlkhtt-fontend.vercel.app/payment/success?orderCode={order.OrderCode}";
-            string cancelUrl = $"https://qlkhtt-fontend.vercel.app/failed?orderCode={order.OrderCode}";
+            string cancelUrl = $"https://qlkhtt-fontend.vercel.app/payment/failed?orderCode={order.OrderCode}";
             var items = new List<ItemData>
             {
                 new ItemData(order.Course.Title, 1, (int)order.TotalPrice)
