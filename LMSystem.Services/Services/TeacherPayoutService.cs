@@ -33,7 +33,7 @@ public class TeacherPayoutService : ITeacherPayoutService
     }
 
     // Generate payout entries per teacher for a month
-   public async Task GeneratePayoutForMonthAsync(int month, int year)
+    public async Task GeneratePayoutForMonthAsync(int month, int year)
     {
         // get all teachers (account service). We assume it returns basic dto with Id, FirstName, LastName, CreatedAt
         var teachers = await _accountService.GetAllTeachers();
